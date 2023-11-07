@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "556630410004",
+    "project_id": "wediary-b080b",
+    "storage_bucket": "wediary-b080b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556630410004:android:37c07d1b97044acccbb801",
+        "android_client_info": {
+          "package_name": "com.project.wediary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXW83dPn9vinffsoUjHccpQFis1QDWD6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
