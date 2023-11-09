@@ -34,9 +34,11 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -45,6 +47,7 @@ android {
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
@@ -54,12 +57,6 @@ android {
         }
     }
 }
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 
 dependencies {
 
@@ -80,6 +77,7 @@ dependencies {
     ksp(libs.hilt.ksp)
     ksp(libs.room.ksp)
     implementation(libs.compose.navigation)
+    implementation(libs.splash.screen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -87,4 +85,7 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+    // Desugar JDK
+    coreLibraryDesugaring (libs.core.library8)
 }
