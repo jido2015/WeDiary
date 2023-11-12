@@ -74,6 +74,8 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
+    implementation(libs.stevdza.onetap)
+    implementation(libs.stevdza.messageBarCompose)
     ksp(libs.hilt.ksp)
     ksp(libs.room.ksp)
     implementation(libs.compose.navigation)
