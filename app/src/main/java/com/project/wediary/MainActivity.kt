@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.project.wediary.navigation.Screen
 import com.project.wediary.navigation.SetupNavGraph
 import com.project.wediary.ui.theme.WeDiaryTheme
+import com.project.wediary.util.Constants.APP_ID
+import io.realm.kotlin.mongodb.App
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,10 +25,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeDiaryTheme {
                 val navController = rememberNavController()
-                SetupNavGraph(startDestination = Screen.Authentication.route,
+                SetupNavGraph(startDestination = getStartDestination(),
                     navController = navController)
             }
         }
+    }
+
+    private fun getStartDestination(): String{
+        val user = App.Companion.create(APP_ID).currentUser
+        return if (user!=null && user.loggedIn) Screen.Home.route
+        else Screen.Authentication.route
     }
 }
 
