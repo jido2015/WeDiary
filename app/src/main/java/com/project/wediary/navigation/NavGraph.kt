@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.project.wediary.presentation.screens.auth.AuthenticationScreen
 import com.project.wediary.presentation.screens.auth.AuthenticationViewModel
+import com.project.wediary.presentation.screens.home.HomeScreen
 import com.project.wediary.util.Constants.APP_ID
 import com.project.wediary.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
 import com.stevdzasan.messagebar.rememberMessageBarState
@@ -36,7 +39,7 @@ fun SetupNavGraph(startDestination: String, navController: NavHostController){
             navController.popBackStack()
             navController.navigate(Screen.Home.route)
         })
-        homeRoute()
+        homeRoute(navigateToWrite ={navController.navigate(Screen.Write.route)} )
         write()
     }
 }
@@ -82,23 +85,19 @@ fun NavGraphBuilder.authenticationRoute(
         )
     }
 }
-fun NavGraphBuilder.homeRoute(){
+fun NavGraphBuilder.homeRoute(
+    navigateToWrite: () -> Unit
+){
     composable(route = Screen.Home.route) {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
         // Handle Home screen composable
-        val  scope = rememberCoroutineScope()
-        Column (
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-        ){
-            Button(onClick = {
-                scope.launch(Dispatchers.IO) {
-                    App.Companion.create(APP_ID).currentUser?.logOut()
-                }
-            }) {
-                Text(text = "Logout")
-            }
-        }
+        HomeScreen(onMenuClicked ={
+            scope.launch { drawerState.open() }
+        },
+            onNavigateToWrite = navigateToWrite,
+            drawerState= drawerState,
+            onSignOutClicked = {})
     }
 }
 fun NavGraphBuilder.write(){
