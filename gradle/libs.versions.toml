@@ -1,15 +1,15 @@
 [versions]
-agp = "8.0.1"
+agp = "8.0.2"
 core-ktx = "1.12.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 kotlinGradlePlugin = "1.9.10"
 lifecycle-runtime-ktx = "2.6.2"
-activity-compose = "1.8.0"
+activity-compose = "1.8.1"
 compose-bom = "2023.10.01"
 navigation = "2.7.5"
-firebase-auth = "22.2.0"
+firebase-auth = "22.3.0"
 reamlDB = "1.11.1"
 dagger-hilt = "2.48.1"
 google-services = "4.4.0"
@@ -17,16 +17,18 @@ devtools-ksp = "1.9.10-1.0.13"
 core-library8 = "2.0.4"
 hilt-navigation = "1.1.0"
 firebase-storage = "20.3.0"
-firebase-boom = "32.5.0"
-room-ksp = "2.6.0"
+firebase-boom = "32.6.0"
+room-ksp = "2.6.1"
 chain-resolver = "0.5.0"
-compiler = "1.5.4"
+compiler = "1.5.5"
 splash-screen = "1.0.1"
-android-library = "8.1.3"
+android-library = "8.1.4"
 onetap = "1.0.7"
 messageBarCompose = "1.0.5"
-coroutines-core = "1.7.1"
+coroutines-core = "1.7.3"
 mongodb-realm ="1.11.0"
+coil-image = "2.3.0"
+
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -74,6 +76,9 @@ firebase-boom = { group = "com.google.firebase", name = "firebase-bom", version.
 #Room
 room-ksp = { group = "androidx.room", name = "room-compiler", version.ref = "room-ksp" }
 androidx-compiler = { group = "androidx.compose.compiler", name = "compiler", version.ref = "compiler" }
+
+#Coil Image loader
+coil-image = {group ="io.coil-kt", name ="coil-compose", version.ref ="coil-image"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

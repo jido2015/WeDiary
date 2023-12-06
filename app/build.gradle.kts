@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
     implementation(libs.stevdza.onetap)
+    implementation(libs.coil.image)
     implementation(libs.mongodb.realm)
     implementation(libs.stevdza.messageBarCompose)
     ksp(libs.hilt.ksp)
