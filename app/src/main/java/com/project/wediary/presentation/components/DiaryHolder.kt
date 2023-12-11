@@ -1,6 +1,7 @@
 package com.project.wediary.presentation.components
 
 import android.content.DialogInterface.OnClickListener
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,7 @@ import com.project.wediary.model.Mood
 import com.project.wediary.presentation.screens.home.DateHolder
 import com.project.wediary.ui.theme.Elevation
 import com.project.wediary.util.toInstant
+import io.realm.kotlin.ext.realmListOf
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -48,6 +51,8 @@ import java.util.Locale
 fun DiaryHolder(diary: Diary, onClick: (String) -> Unit){
     var componentHeight by remember { mutableStateOf(0.dp)}
     val localDensity = LocalDensity.current
+    var galleryOpened by remember { mutableStateOf(false)}
+    var galleryLoading by remember { mutableStateOf(false)}
 
     Row(modifier = Modifier.clickable(
         indication = null,
@@ -77,7 +82,18 @@ fun DiaryHolder(diary: Diary, onClick: (String) -> Unit){
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (diary.images.isNotEmpty()){
+                    ShowGalleryButton(galleryOpened = galleryOpened, galleryLoading = galleryLoading, onClick = {
+                        galleryOpened = !galleryOpened
+                        galleryLoading = !galleryLoading
+                    } )
+                }
 
+                AnimatedVisibility(visible = galleryOpened) {
+                    Column(modifier = Modifier.padding(all = 14.dp)) {
+                        Gallery(images = diary.images)
+                    }
+                }
             }
         }
 
@@ -120,6 +136,23 @@ fun DiaryHeader(moodName: String, time: Instant) {
     }
 }
 
+
+@Composable
+fun ShowGalleryButton(
+    galleryOpened: Boolean,
+    galleryLoading: Boolean,
+    onClick: () -> Unit
+) {
+    TextButton(onClick = onClick) {
+        Text(
+            text = if (galleryOpened)
+                if (galleryLoading) "Loading" else "Hide Gallery"
+            else "Show Gallery",
+            style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+        )
+    }
+}
+
 @Composable
 @Preview(showBackground = true)
 fun  DiaryHolderPreview(){
@@ -127,5 +160,6 @@ fun  DiaryHolderPreview(){
         title = "My Diary"
         description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
         mood = Mood.Happy.name
+        images = realmListOf("", "")
     }, onClick = {})
 }
