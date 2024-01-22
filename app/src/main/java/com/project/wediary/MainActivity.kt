@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.project.wediary.data.repository.MongoDB
 import com.project.wediary.navigation.Screen
 import com.project.wediary.navigation.SetupNavGraph
 import com.project.wediary.ui.theme.WeDiaryTheme
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             WeDiaryTheme {
                 val navController = rememberNavController()

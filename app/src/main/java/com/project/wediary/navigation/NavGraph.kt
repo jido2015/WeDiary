@@ -3,6 +3,7 @@ package com.project.wediary.navigation
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,10 +16,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.project.wediary.data.repository.MongoDB
 import com.project.wediary.presentation.components.DisplayAlertDialog
 import com.project.wediary.presentation.screens.auth.AuthenticationScreen
 import com.project.wediary.presentation.screens.auth.AuthenticationViewModel
 import com.project.wediary.presentation.screens.home.HomeScreen
+import com.project.wediary.presentation.screens.home.HomeViewModel
 import com.project.wediary.util.Constants.APP_ID
 import com.project.wediary.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
 import com.stevdzasan.messagebar.rememberMessageBarState
@@ -96,17 +99,25 @@ fun NavGraphBuilder.homeRoute(
     navigateToAuth: () -> Unit
 ){
     composable(route = Screen.Home.route) {
+        val viewModel: HomeViewModel = viewModel()
+        val diaries by viewModel.diaries
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         var signOutDialogOpened by remember { mutableStateOf(false) }
 
         val scope = rememberCoroutineScope()
         // Handle Home screen composable
-        HomeScreen(onMenuClicked ={ 
+        HomeScreen(
+            diaries = diaries,
+            onMenuClicked ={
             scope.launch { drawerState.open() } },
             onNavigateToWrite = navigateToWrite,
             drawerState= drawerState,
             onSignOutClicked = {signOutDialogOpened = true}
         )
+        LaunchedEffect(key1 = Unit) {
+            MongoDB.configureRealm()
+        }
+        
         DisplayAlertDialog(
             title = "Sign Out",
             message = "Are you sure you want to sign out from your google account?",

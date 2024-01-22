@@ -1,6 +1,5 @@
 package com.project.wediary.presentation.components
 
-import android.content.DialogInterface.OnClickListener
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,12 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.project.wediary.model.Diary
 import com.project.wediary.model.Mood
-import com.project.wediary.presentation.screens.home.DateHolder
 import com.project.wediary.ui.theme.Elevation
 import com.project.wediary.util.toInstant
 import io.realm.kotlin.ext.realmListOf
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -136,7 +133,6 @@ fun DiaryHeader(moodName: String, time: Instant) {
     }
 }
 
-
 @Composable
 fun ShowGalleryButton(
     galleryOpened: Boolean,
@@ -144,9 +140,7 @@ fun ShowGalleryButton(
     onClick: () -> Unit
 ) {
     TextButton(onClick = onClick) {
-        Text(
-            text = if (galleryOpened)
-                if (galleryLoading) "Loading" else "Hide Gallery"
+        Text(text = if (galleryOpened) "Hide Gallery" else if (galleryLoading) "Loading"
             else "Show Gallery",
             style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
         )
