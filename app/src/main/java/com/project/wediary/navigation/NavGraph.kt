@@ -16,14 +16,18 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.project.wediary.data.repository.MongoDB
+import com.project.wediary.model.Diary
 import com.project.wediary.presentation.components.DisplayAlertDialog
 import com.project.wediary.presentation.screens.auth.AuthenticationScreen
 import com.project.wediary.presentation.screens.auth.AuthenticationViewModel
 import com.project.wediary.presentation.screens.home.HomeScreen
 import com.project.wediary.presentation.screens.home.HomeViewModel
+import com.project.wediary.presentation.screens.write.WriteScreen
 import com.project.wediary.util.Constants.APP_ID
 import com.project.wediary.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
+import com.project.wediary.util.RequestState
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import io.realm.kotlin.mongodb.App
@@ -32,29 +36,34 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun SetupNavGraph(startDestination: String, navController: NavHostController){
+fun SetupNavGraph(startDestination: String,
+                  navController: NavHostController,
+                  onDataLoaded: () -> Unit){
     NavHost(startDestination = startDestination,
         navController = navController )
     {
-        authenticationRoute(navigateToHome ={
+        authenticationRoute(
+            navigateToHome ={
             navController.popBackStack()
-            navController.navigate(Screen.Home.route)
-        })
+            navController.navigate(Screen.Home.route) },
+            onDataLoaded = onDataLoaded)
         homeRoute(
             navigateToWrite = {
                 navController.navigate(Screen.Write.route)
             },
             navigateToAuth = {
                 navController.popBackStack()
-                navController.navigate(Screen.Authentication.route)
-
-            })
-        writeRoute()
+                navController.navigate(Screen.Authentication.route) },
+            onDataLoaded = onDataLoaded)
+        writeRoute(onBackPressed = {
+            navController.popBackStack()
+        })
     }
 }
 
 fun NavGraphBuilder.authenticationRoute(
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    onDataLoaded: () -> Unit
 ){
     composable(route = Screen.Authentication.route) {
         // Handle Authentication screen composable
@@ -64,7 +73,9 @@ fun NavGraphBuilder.authenticationRoute(
 
         val oneTapState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
-
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
         AuthenticationScreen(
             authenticated = authenticated.value,
             loadingState = loadingState,
@@ -96,15 +107,21 @@ fun NavGraphBuilder.authenticationRoute(
 }
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: () -> Unit,
-    navigateToAuth: () -> Unit
+    navigateToAuth: () -> Unit,
+    onDataLoaded: () -> Unit
 ){
     composable(route = Screen.Home.route) {
         val viewModel: HomeViewModel = viewModel()
         val diaries by viewModel.diaries
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         var signOutDialogOpened by remember { mutableStateOf(false) }
-
         val scope = rememberCoroutineScope()
+        
+        LaunchedEffect(key1 = diaries) {
+            if (diaries !is RequestState.Loading){
+                onDataLoaded()
+            }
+        }
         // Handle Home screen composable
         HomeScreen(
             diaries = diaries,
@@ -135,7 +152,7 @@ fun NavGraphBuilder.homeRoute(
     }
 
 }
-fun NavGraphBuilder.writeRoute(){
+fun NavGraphBuilder.writeRoute(onBackPressed: ()-> Unit){
     composable(route = Screen.Write.route,
         arguments = listOf(navArgument(name = WRITE_SCREEN_ARGUMENT_KEY){
             type = NavType.StringType
@@ -144,5 +161,9 @@ fun NavGraphBuilder.writeRoute(){
         })
         ) {
         // Handle Write screen composable
+        WriteScreen(
+            selectedDiary = null,
+            onDeleteConfirmed = {},
+            onBackPressed = onBackPressed)
     }
 }

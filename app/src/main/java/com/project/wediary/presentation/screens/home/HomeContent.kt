@@ -3,11 +3,14 @@ package com.project.wediary.presentation.screens.home
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.project.wediary.model.Diary
 import com.project.wediary.presentation.components.DiaryHolder
@@ -39,12 +43,15 @@ fun HomeContent(
         LazyColumn(
           modifier = Modifier.padding(horizontal = 24.dp)
               .padding(top = paddingValues.calculateTopPadding())
+              .padding(bottom = paddingValues.calculateBottomPadding())
+              .padding(start = paddingValues.calculateStartPadding(LayoutDirection.Ltr))
+              .padding(end = paddingValues.calculateEndPadding(LayoutDirection.Ltr))
       ) {
 
           diaryNotes.forEach {
               (localDate, diaries) ->
               stickyHeader(key = localDate) {
-                  DateHolder(localDate = localDate)  }
+                  DateHeader(localDate = localDate)  }
               items (
                   items = diaries,
                   key = {it._id.toString()}
@@ -60,9 +67,12 @@ fun HomeContent(
 }
 
 @Composable
-fun DateHolder(localDate: LocalDate){
+fun DateHeader(localDate: LocalDate){
     Row(
-        modifier = Modifier.padding(vertical = 14.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Column(horizontalAlignment = Alignment.End) {
             Text(text = String.format("%02d", localDate.dayOfMonth),
@@ -132,5 +142,5 @@ fun EmptyPage(
 @Composable
 @Preview(showBackground = true)
 fun  DateHeaderPreview(){
-    DateHolder(localDate = LocalDate.now())
+    DateHeader(localDate = LocalDate.now())
 }

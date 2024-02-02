@@ -21,16 +21,20 @@ import com.project.wediary.util.Constants.APP_ID
 import io.realm.kotlin.mongodb.App
 
 class MainActivity : ComponentActivity() {
+    var keepSplashOpen = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition{
+            keepSplashOpen
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             WeDiaryTheme {
                 val navController = rememberNavController()
                 SetupNavGraph(startDestination = getStartDestination(),
-                    navController = navController)
+                    navController = navController,
+                    onDataLoaded ={ keepSplashOpen = false })
             }
         }
     }
