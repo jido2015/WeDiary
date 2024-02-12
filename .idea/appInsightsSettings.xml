@@ -8,7 +8,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.UnionSoftToken" />
+                  <option name="appId" value="com.project.android.chefcook" />
                 </ConnectionSetting>
               </option>
               <option name="failureTypes">

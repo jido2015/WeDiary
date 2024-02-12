@@ -1,5 +1,7 @@
 package com.project.wediary.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.project.wediary.data.repository.MongoDB
 import com.project.wediary.model.Diary
+import com.project.wediary.model.Mood
 import com.project.wediary.presentation.components.DisplayAlertDialog
 import com.project.wediary.presentation.screens.auth.AuthenticationScreen
 import com.project.wediary.presentation.screens.auth.AuthenticationViewModel
@@ -152,7 +155,9 @@ fun NavGraphBuilder.homeRoute(
     }
 
 }
+@OptIn(ExperimentalFoundationApi::class)
 fun NavGraphBuilder.writeRoute(onBackPressed: ()-> Unit){
+
     composable(route = Screen.Write.route,
         arguments = listOf(navArgument(name = WRITE_SCREEN_ARGUMENT_KEY){
             type = NavType.StringType
@@ -160,8 +165,10 @@ fun NavGraphBuilder.writeRoute(onBackPressed: ()-> Unit){
             defaultValue = null
         })
         ) {
+        val pagerState = rememberPagerState(pageCount = { Mood.entries.size})
         // Handle Write screen composable
         WriteScreen(
+            pagerState = pagerState,
             selectedDiary = null,
             onDeleteConfirmed = {},
             onBackPressed = onBackPressed)
