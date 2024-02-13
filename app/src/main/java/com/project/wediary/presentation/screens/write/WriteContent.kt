@@ -16,7 +16,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -89,7 +91,7 @@ fun WriteContent(
 
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = title,
+                value = description,
                 onValueChange = onDescriptionChanged,
                 placeholder = { Text(text = "Tell me about it")},
                 colors = TextFieldDefaults.colors(
@@ -105,5 +107,16 @@ fun WriteContent(
                 keyboardActions = KeyboardActions(onNext = {})
             )
         }
+    }
+
+    Column(verticalArrangement = Arrangement.Bottom) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(modifier = Modifier.fillMaxSize().height(54.dp),
+            onClick = { /*TODO*/ },
+            shape = Shapes().small
+        ) {
+            Text(text = "Save")
+        }
+
     }
 }

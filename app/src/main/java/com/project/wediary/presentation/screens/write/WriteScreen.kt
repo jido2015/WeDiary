@@ -23,6 +23,15 @@ fun WriteScreen (
                 selectedDiary =  selectedDiary,
                 onBackPressed = onBackPressed)
         },
-        content = {}
+        content = {
+            WriteContent(
+                pagerState = pagerState,
+                paddingValues = it,
+                title = "",
+                onTitleChanged = {},
+                description = "",
+                onDescriptionChanged ={}
+            )
+        }
     )
 }
