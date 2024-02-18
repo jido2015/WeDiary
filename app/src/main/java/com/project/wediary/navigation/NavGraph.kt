@@ -1,5 +1,6 @@
 package com.project.wediary.navigation
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -18,9 +20,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.project.wediary.data.repository.MongoDB
-import com.project.wediary.model.Diary
 import com.project.wediary.model.Mood
 import com.project.wediary.presentation.components.DisplayAlertDialog
 import com.project.wediary.presentation.screens.auth.AuthenticationScreen
@@ -28,6 +28,7 @@ import com.project.wediary.presentation.screens.auth.AuthenticationViewModel
 import com.project.wediary.presentation.screens.home.HomeScreen
 import com.project.wediary.presentation.screens.home.HomeViewModel
 import com.project.wediary.presentation.screens.write.WriteScreen
+import com.project.wediary.presentation.screens.write.WriteViewModel
 import com.project.wediary.util.Constants.APP_ID
 import com.project.wediary.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
 import com.project.wediary.util.RequestState
@@ -57,7 +58,11 @@ fun SetupNavGraph(startDestination: String,
             navigateToAuth = {
                 navController.popBackStack()
                 navController.navigate(Screen.Authentication.route) },
-            onDataLoaded = onDataLoaded)
+            onDataLoaded = onDataLoaded,
+            navigateToWriteWithArgs = {
+                navController.navigate(Screen.Write.passDiaryId(diaryId = it))
+            })
+
         writeRoute(onBackPressed = {
             navController.popBackStack()
         })
@@ -110,6 +115,7 @@ fun NavGraphBuilder.authenticationRoute(
 }
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit,
     navigateToAuth: () -> Unit,
     onDataLoaded: () -> Unit
 ){
@@ -131,6 +137,7 @@ fun NavGraphBuilder.homeRoute(
             onMenuClicked ={
             scope.launch { drawerState.open() } },
             onNavigateToWrite = navigateToWrite,
+            navigateToWriteWithArgs = navigateToWriteWithArgs,
             drawerState= drawerState,
             onSignOutClicked = {signOutDialogOpened = true}
         )
@@ -165,12 +172,20 @@ fun NavGraphBuilder.writeRoute(onBackPressed: ()-> Unit){
             defaultValue = null
         })
         ) {
+        // Handle Write screen composable
+        val viewModel: WriteViewModel = viewModel()
+        val uiState = viewModel.uiState
         val pagerState = rememberPagerState(pageCount = { Mood.entries.size})
+
         // Handle Write screen composable
         WriteScreen(
+            uiState = uiState,
             pagerState = pagerState,
             selectedDiary = null,
             onDeleteConfirmed = {},
+            onTitleChanged = { viewModel.setTitle(title = it) },
+            onDescriptionChanged = { viewModel.setDescription(description = it) },
+            moodName = {""},
             onBackPressed = onBackPressed)
     }
 }

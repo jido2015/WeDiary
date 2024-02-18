@@ -47,7 +47,8 @@ fun HomeScreen(
     drawerState: DrawerState,
     onSignOutClicked: () -> Unit,
     onMenuClicked: () -> Unit,
-    onNavigateToWrite: () -> Unit
+    onNavigateToWrite: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit,
 ) {
 
     var padding by remember { mutableStateOf(PaddingValues()) }
@@ -65,7 +66,8 @@ fun HomeScreen(
                 FloatingActionButton(
                     modifier = Modifier.padding(
                         end = padding.calculateEndPadding(LayoutDirection.Ltr)),
-                    onClick = { onNavigateToWrite() }) {
+                    onClick = {
+                        onNavigateToWrite() }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "New Diary Icon"
@@ -76,7 +78,10 @@ fun HomeScreen(
                 padding = it
                 when (diaries){
                     is RequestState.Success ->{
-                        HomeContent(paddingValues = it, diaryNotes = diaries.data, onclick = {})
+                        HomeContent(
+                            paddingValues = it,
+                            diaryNotes = diaries.data,
+                            onclick = navigateToWriteWithArgs)
                     }
                     is RequestState.Error ->{
                         EmptyPage(

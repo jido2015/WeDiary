@@ -31,6 +31,7 @@ import java.util.Date
 @Composable
 fun WriteTopBar(
     selectedDiary: Diary?,
+    moodName: () -> String,
     onDeleteConfirmed: () -> Unit,
     onBackPressed: () -> Unit
 ) {
@@ -47,7 +48,7 @@ fun WriteTopBar(
             Column {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Happy",
+                    text = moodName(),
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         fontWeight = FontWeight.Bold
