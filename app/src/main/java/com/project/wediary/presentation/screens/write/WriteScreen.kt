@@ -15,7 +15,6 @@ import com.project.wediary.model.Mood
 fun WriteScreen (
     uiState: UiState,
     pagerState: PagerState,
-    selectedDiary: Diary?,
     moodName: () -> String,
     onDeleteConfirmed: () -> Unit,
     onTitleChanged: (String) -> Unit,
@@ -30,7 +29,7 @@ fun WriteScreen (
         topBar = {
             WriteTopBar(
                 onDeleteConfirmed = onDeleteConfirmed,
-                selectedDiary =  selectedDiary,
+                selectedDiary =  uiState.selectedDiary,
                 moodName = moodName,
                 onBackPressed = onBackPressed)
         },

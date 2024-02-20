@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.wediary.data.repository.MongoDB
+import com.project.wediary.model.Diary
 import com.project.wediary.model.Mood
 import com.project.wediary.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
 import com.project.wediary.util.RequestState
@@ -40,12 +41,17 @@ class WriteViewModel(private val savedStateHandle: SavedStateHandle
                 val diary = MongoDB.getSelectedDiary(diaryId = ObjectId.invoke(uiState.selectedDiaryId!!))
 
                 if (diary is RequestState.Success){
+                    setSelectedDiary(diary = diary.data)
                     setTitle(diary.data.title)
                     setDescription(diary.data.description)
                     setMood(mood = Mood.valueOf(diary.data.mood))
                 }
             }
         }
+    }
+
+    fun setSelectedDiary(diary: Diary){
+        uiState = uiState.copy(selectedDiary = diary)
     }
 
     fun setTitle(title: String){
@@ -62,6 +68,7 @@ class WriteViewModel(private val savedStateHandle: SavedStateHandle
 
 data class UiState(
     val selectedDiaryId: String? = null,
+    val selectedDiary: Diary? = null,
     val title: String = "",
     val description: String = "",
     val mood: Mood = Mood.Neutral

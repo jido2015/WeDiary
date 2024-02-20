@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -25,7 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.project.wediary.model.Diary
 import com.project.wediary.presentation.components.DisplayAlertDialog
+import com.project.wediary.util.toInstant
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +41,24 @@ fun WriteTopBar(
     onDeleteConfirmed: () -> Unit,
     onBackPressed: () -> Unit
 ) {
+    val currentDate by remember { mutableStateOf(LocalDate.now()) }
+    val currentTime by remember { mutableStateOf(LocalDate.now()) }
+
+    val  formatDate = remember(key1 = currentDate) {
+        DateTimeFormatter.ofPattern("dd, MM. yyyy").format(currentDate).uppercase()
+    }
+
+    val  formatTime = remember(key1 = currentTime) {
+        DateTimeFormatter.ofPattern("hh:mm a").format(currentDate).uppercase()
+    }
+    val selectedDiaryDateTime = remember(selectedDiary) {
+        if (selectedDiary != null){
+            SimpleDateFormat("dd MM, yyyy, hh:mm a", Locale.getDefault())
+                .format(Date.from(selectedDiary.date.toInstant())).uppercase()
+        }else{
+            "Unkown"
+        }
+    }
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(onClick = onBackPressed) {
@@ -57,7 +81,7 @@ fun WriteTopBar(
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "",
+                    text = if (selectedDiary !=null) selectedDiaryDateTime else "$formatDate, $formatTime",
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.bodySmall.fontSize
                     ),
