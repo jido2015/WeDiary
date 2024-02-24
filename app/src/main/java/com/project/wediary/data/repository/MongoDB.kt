@@ -22,9 +22,7 @@ object MongoDB: MongoRepository {
     private val user = app.currentUser
     private lateinit var realm: Realm
 
-    init {
-        configureRealm()
-    }
+    init { configureRealm() }
 
     override fun configureRealm() {
         if (user != null) {
