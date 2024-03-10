@@ -1,5 +1,6 @@
 package com.project.wediary.presentation.screens.write
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,21 +35,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.project.wediary.model.Diary
 import com.project.wediary.model.Mood
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WriteContent(
+    uiState: UiState,
     pagerState: PagerState,
     paddingValues: PaddingValues,
     title: String,
     onTitleChanged: (String) -> Unit,
     description: String,
     onDescriptionChanged: (String) -> Unit,
-
-    ){
+    onSaveClicked: (Diary) -> Unit
+) {
 
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,22 +63,27 @@ fun WriteContent(
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(state = scrollState)
-            .weight(1f)
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(state = scrollState)
+                .weight(1f)
         ) {
             Spacer(modifier = Modifier.height(30.dp))
-            HorizontalPager(state = pagerState) {
-                page ->
-                Box(modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center){
-                    AsyncImage(modifier = Modifier.size(120.dp),
+            HorizontalPager(state = pagerState) { page ->
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        modifier = Modifier.size(120.dp),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(Mood.entries[page].icon)
                             .crossfade(true)
                             .build(),
-                        contentDescription = "Mood Image")
+                        contentDescription = "Mood Image"
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(30.dp))
@@ -82,7 +91,7 @@ fun WriteContent(
                 modifier = Modifier.fillMaxWidth(),
                 value = title,
                 onValueChange = onTitleChanged,
-                placeholder = { Text(text = "Title")},
+                placeholder = { Text(text = "Title") },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
@@ -102,7 +111,7 @@ fun WriteContent(
                 modifier = Modifier.fillMaxWidth(),
                 value = description,
                 onValueChange = onDescriptionChanged,
-                placeholder = { Text(text = "Tell me about it")},
+                placeholder = { Text(text = "Tell me about it") },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
@@ -119,16 +128,25 @@ fun WriteContent(
 
         Column(verticalArrangement = Arrangement.Bottom) {
             Spacer(modifier = Modifier.height(12.dp))
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-                onClick = { /*TODO*/ },
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
+                onClick = {
+                    if (uiState.title.isNotEmpty() && uiState.description.isNotEmpty()) {
+                        onSaveClicked(Diary().apply {
+                            this.title = uiState.title
+                            this.description = uiState.description
+
+                        })
+                    } else {
+                        Toast.makeText(context,"Field cannot be empty.", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 shape = Shapes().small
             ) {
                 Text(text = "Save")
             }
-
         }
     }
-
 }

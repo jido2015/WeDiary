@@ -1,6 +1,5 @@
 package com.project.wediary.presentation.screens.write
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +13,7 @@ import com.project.wediary.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
 import com.project.wediary.util.RequestState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
 class WriteViewModel(private val savedStateHandle: SavedStateHandle
@@ -35,22 +35,21 @@ class WriteViewModel(private val savedStateHandle: SavedStateHandle
     private fun fetchSelectedDiary(){
         if (uiState.selectedDiaryId!= null){
             viewModelScope.launch(Dispatchers.Main) {
+                MongoDB.getSelectedDiary(diaryId = ObjectId.invoke(uiState.selectedDiaryId!!))
+                    .collect{diary ->
+                        if (diary is RequestState.Success){
+                            setSelectedDiary(diary = diary.data)
+                            setTitle(diary.data.title)
+                            setDescription(diary.data.description)
+                            setMood(mood = Mood.valueOf(diary.data.mood))
+                        }
+                    }
 
-                Log.d("LogDiaryId", "${uiState.selectedDiaryId}")
-                Log.d("LogInvokedId", "${ObjectId.invoke(uiState.selectedDiaryId!!)}")
-                val diary = MongoDB.getSelectedDiary(diaryId = ObjectId.invoke(uiState.selectedDiaryId!!))
-
-                if (diary is RequestState.Success){
-                    setSelectedDiary(diary = diary.data)
-                    setTitle(diary.data.title)
-                    setDescription(diary.data.description)
-                    setMood(mood = Mood.valueOf(diary.data.mood))
-                }
             }
         }
     }
 
-    fun setSelectedDiary(diary: Diary){
+    private fun setSelectedDiary(diary: Diary){
         uiState = uiState.copy(selectedDiary = diary)
     }
 
@@ -61,8 +60,24 @@ class WriteViewModel(private val savedStateHandle: SavedStateHandle
         uiState = uiState.copy(description = description)
     }
 
-    fun setMood(mood: Mood){
+    private fun setMood(mood: Mood){
         uiState = uiState.copy(mood = mood)
+    }
+    fun insertDiary(diary: Diary,
+                    onSuccess:()-> Unit,
+                    onError:(String)-> Unit){
+       viewModelScope.launch(Dispatchers.IO) {
+           val result = MongoDB.insertDiary(diary = diary)
+           if (result is RequestState.Success){
+               withContext(Dispatchers.Main){
+                   onSuccess()
+               }
+           }else if (result is RequestState.Error){
+               withContext(Dispatchers.Main){
+                   onError(result.error.message.toString())
+               }
+           }
+       }
     }
 }
 

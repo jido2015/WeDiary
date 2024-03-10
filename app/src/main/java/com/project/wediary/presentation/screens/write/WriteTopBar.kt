@@ -29,6 +29,7 @@ import com.project.wediary.presentation.components.DisplayAlertDialog
 import com.project.wediary.util.toInstant
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -42,14 +43,14 @@ fun WriteTopBar(
     onBackPressed: () -> Unit
 ) {
     val currentDate by remember { mutableStateOf(LocalDate.now()) }
-    val currentTime by remember { mutableStateOf(LocalDate.now()) }
+    val currentTime by remember { mutableStateOf(LocalDateTime.now()) }
 
     val  formatDate = remember(key1 = currentDate) {
         DateTimeFormatter.ofPattern("dd, MM. yyyy").format(currentDate).uppercase()
     }
 
     val  formatTime = remember(key1 = currentTime) {
-        DateTimeFormatter.ofPattern("hh:mm a").format(currentDate).uppercase()
+        DateTimeFormatter.ofPattern("hh:mm a").format(currentTime).uppercase()
     }
     val selectedDiaryDateTime = remember(selectedDiary) {
         if (selectedDiary != null){
