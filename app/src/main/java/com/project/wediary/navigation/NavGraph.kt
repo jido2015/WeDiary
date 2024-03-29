@@ -182,7 +182,7 @@ fun NavGraphBuilder.writeRoute(onBackPressed: ()-> Unit){
         // Handle Write screen composable
         WriteScreen(
             onSaveClicked = {
-                viewModel.insertDiary(
+                viewModel.upsertDiary(
                     diary = it.apply { mood = Mood.entries[pageNumber].name },
                     onSuccess = {onBackPressed()},
                     onError = {}
